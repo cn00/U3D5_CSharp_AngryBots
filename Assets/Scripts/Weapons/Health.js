@@ -59,7 +59,7 @@ function OnDamage (amount : float, fromDirection : Vector3) {
 	//  but makes playing and showing certain areas in the
 	//  game a lot easier
 	/*
-	#if !UNITY_IPHONE && !UNITY_ANDROID
+	#if !UNITY_IPHONE && !UNITY_ANDROID && !UNITY_WP8
 	if(gameObject.tag != "Player")
 		amount *= 10.0;
 	#endif
@@ -92,7 +92,7 @@ function OnDamage (amount : float, fromDirection : Vector3) {
 	// Die if no health left
 	if (health <= 0)
 	{
-		GameScore.RegisterDeath (gameObject);
+//		GameScore.RegisterDeath (gameObject);
 
 		health = 0;
 		dead = true;

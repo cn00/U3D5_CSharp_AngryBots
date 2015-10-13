@@ -36,7 +36,7 @@ function Update()
 		}
         var fps : float = frames / (timeNow - lastInterval);
 		var ms : float = 1000.0f / Mathf.Max (fps, 0.00001);
-		gui.text = ms.ToString("f1") + "ms " + fps.ToString("f2") + "FPS";
+		gui.text = ms.ToString("f1") + "ms\n" + fps.ToString("f2") + "FPS";
         frames = 0;
         lastInterval = timeNow;
     }

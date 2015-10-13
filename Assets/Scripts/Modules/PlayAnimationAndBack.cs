@@ -5,8 +5,8 @@ public class PlayAnimationAndBack : MonoBehaviour {
 
 
 
-string clip = "MyAnimation";
-float speed = 1.0f;
+	public string clip = "MyAnimation";
+	public float speed = 1.0f;
 
 void OnSignal (){
 	FixTime ();

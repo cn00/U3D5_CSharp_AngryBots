@@ -74,7 +74,8 @@ public class MechMovementMotor : MovementMotor {
 		else
 			targetVelocity = GetComponent<Rigidbody>().velocity.y * Vector3.up;
 
-        GetComponent<Rigidbody>().velocity = Vector3.MoveTowards(GetComponent<Rigidbody>().velocity, targetVelocity, Time.deltaTime * walkingSpeed * 3);       // Vector3.MoveTowards : u3d api, 移向,当前的地点移向目标。
+        GetComponent<Rigidbody>().velocity = Vector3.MoveTowards(GetComponent<Rigidbody>().velocity, targetVelocity, Time.deltaTime * walkingSpeed * 3);
+		// Vector3.MoveTowards : u3d api, 移向,当前的地点移向目标。
 		//transform.position += targetVelocity * Time.deltaTime * walkingSpeed * 3;
 	}
 	

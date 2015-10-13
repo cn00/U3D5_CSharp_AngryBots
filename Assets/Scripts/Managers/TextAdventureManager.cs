@@ -22,7 +22,7 @@ public class TextAdventureManager : MonoBehaviour {
         GameObject rightIcon = new GameObject("Right Arrow", typeof(GUIText));
 
 #if UNITY_IPHONE || UNITY_ANDROID
-	    leftIcon.guiText.text = "<";
+	    leftIcon.GetComponent<GUIText>().text = "<";
 #else
         leftIcon.GetComponent<GUIText>().text = "< backspace";
 #endif
@@ -35,7 +35,7 @@ public class TextAdventureManager : MonoBehaviour {
         leftIcon.transform.position = new Vector3(0.01f, 0.1f, leftIcon.transform.position.z);
 
 #if UNITY_IPHONE || UNITY_ANDROID
-	    rightIcon.guiText.text = ">";
+	    rightIcon.GetComponent<GUIText>().text = ">";
 #else
         rightIcon.GetComponent<GUIText>().text = "space >";
 #endif

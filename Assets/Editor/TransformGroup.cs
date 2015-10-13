@@ -4,7 +4,7 @@ using System.Collections;
 
 public class TransformGroup : ScriptableObject
 {
-    [MenuItem ("Tools/Standard Editor Tools/Transform Utilities/Grouping/Group Selection %g", false, 1)]
+    [MenuItem ("Tools/Standard Editor Tools/Group Selection %g", false, 1)]
     static void MenuInsertParent()
     {
         Transform[] transforms = Selection.GetTransforms(SelectionMode.TopLevel |

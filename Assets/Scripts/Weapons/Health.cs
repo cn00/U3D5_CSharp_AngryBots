@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 //2013年7月27日18:23:29，郭志程
@@ -15,6 +16,8 @@ public class Health : MonoBehaviour {
     public Transform damageEffectTransform;
     public float damageEffectMultiplier = 1.0f;
     public bool  damageEffectCentered = true;
+
+	public TextMesh  healthLabel;
 
     public GameObject scorchMarkPrefab = null;
     private GameObject scorchMark = null;
@@ -46,8 +49,21 @@ public class Health : MonoBehaviour {
 		    scorchMark = GameObject.Instantiate(scorchMarkPrefab, Vector3.zero, Quaternion.identity) as GameObject;
 		    scorchMark.SetActive (false);
 	    }
+
+		SetHealth( health );
+	
     }
 
+	public void SetHealth(float value)
+	{
+		health = value;
+		// label
+		//		healthLabel = GetComponentInChildren<TextMesh>();
+		if (healthLabel) {
+			healthLabel.text = health.ToString("f2");
+		}
+		
+	}
     /// <summary>
     /// 被攻击,不是u3d api函数
     /// </summary>       
@@ -72,7 +88,7 @@ public class Health : MonoBehaviour {
 	    #endif
 	    */
 
-	    health -= amount;
+	    SetHealth( health - amount);
 	    damageSignals.SendSignals (this);
 	    lastDamageTime = Time.time;
 

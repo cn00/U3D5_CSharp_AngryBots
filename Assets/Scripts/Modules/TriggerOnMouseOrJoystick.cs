@@ -12,7 +12,7 @@ public class TriggerOnMouseOrJoystick : MonoBehaviour {
         private Joystick[] joysticks;
 
         void Start (){
-	        joysticks = FindObjectsOfType (Joystick) as Joystick[];	
+			joysticks = FindObjectsOfType (typeof(Joystick)) as Joystick[];	
         }
     #endif
 

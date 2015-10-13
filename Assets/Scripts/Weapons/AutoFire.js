@@ -31,7 +31,7 @@ function Update () {
 			// Spawn visual bullet
 			var coneRandomRotation = Quaternion.Euler (Random.Range (-coneAngle, coneAngle), Random.Range (-coneAngle, coneAngle), 0);
 			var go : GameObject = Spawner.Spawn (bulletPrefab, spawnPoint.position, spawnPoint.rotation * coneRandomRotation) as GameObject;
-			var bullet : SimpleBullet = go.GetComponent.<SimpleBullet> ();
+			var bullet : SimpleBullet = go.transform.GetComponent.<SimpleBullet> ();
 
 			lastFireTime = Time.time;
 
@@ -53,9 +53,10 @@ function Update () {
 				}
 
 				// Ricochet sound
-				var sound : AudioClip = MaterialImpactManager.GetBulletHitSound (hitInfo.collider.sharedMaterial);
-				AudioSource.PlayClipAtPoint (sound, hitInfo.point, hitSoundVolume);
-
+				if (hitInfo.collider.sharedMaterial){
+					var sound : AudioClip = MaterialImpactManager.GetBulletHitSound (hitInfo.collider.sharedMaterial);
+					AudioSource.PlayClipAtPoint (sound, hitInfo.point, hitSoundVolume);
+				}
 				bullet.dist = hitInfo.distance;
 			}
 			else {

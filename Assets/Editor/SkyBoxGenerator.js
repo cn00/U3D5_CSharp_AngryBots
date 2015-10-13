@@ -46,7 +46,7 @@ class SkyBoxGenerator extends ScriptableWizard
         DestroyImmediate (go);
     }
     
-    @MenuItem("Tools/Standard Editor Tools/Render/Render Into Skybox (Unity Pro Only)", false, 4)
+    @MenuItem("Tools/Standard Editor Tools/Render/Render Into Skybox (Pro Only)", false, 4)
     static function RenderSkyBox()
     {
         ScriptableWizard.DisplayWizard ("Render SkyBox", SkyBoxGenerator, "Render!");

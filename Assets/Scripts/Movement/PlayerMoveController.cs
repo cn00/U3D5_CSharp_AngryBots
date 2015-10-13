@@ -58,16 +58,16 @@ public class PlayerMoveController : MonoBehaviour {
 	    initOffsetToPlayer = mainCameraTransform.position - character.position;
 	
 	    #if UNITY_IPHONE || UNITY_ANDROID
-		                                            if (joystickPrefab) {
+		if (joystickPrefab) {
 			// Create left joystick
 			GameObject joystickLeftGO = Instantiate (joystickPrefab) as GameObject;
 			joystickLeftGO.name = "Joystick Left";
-			joystickLeft = joystickLeftGO.GetComponent.<Joystick> ();
+			joystickLeft = joystickLeftGO.GetComponent<Joystick>();
 			
 			// Create right joystick
 			joystickRightGO = Instantiate (joystickPrefab) as GameObject;
 			joystickRightGO.name = "Joystick Right";
-			joystickRight = joystickRightGO.GetComponent.<Joystick> ();			
+			joystickRight = joystickRightGO.GetComponent<Joystick> ();			
 		}
 	    #elif !UNITY_FLASH
 		    if (cursorPrefab) {
@@ -87,9 +87,12 @@ public class PlayerMoveController : MonoBehaviour {
 
     void Start () {
 	    #if UNITY_IPHONE || UNITY_ANDROID
-		            // Move to right side of screen
-		GUITexture guiTex = joystickRightGO.GetComponent.<GUITexture> ();
-		guiTex.pixelInset.x = Screen.width - guiTex.pixelInset.x - guiTex.pixelInset.width;			
+		// Move to right side of screen
+		GUITexture guiTex = joystickRightGO.GetComponent<GUITexture> ();
+		Rect pixelInset = new Rect(guiTex.pixelInset);
+		pixelInset.x = Screen.width - guiTex.pixelInset.x - guiTex.pixelInset.width;
+		guiTex.pixelInset = pixelInset;
+
 	    #endif	
 	
 	    // it's fine to calculate this on Start () as the camera is static in rotation

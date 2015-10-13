@@ -16,7 +16,7 @@ public class ShaderDatabase : MonoBehaviour {
 
     void Awake (){	
     #if UNITY_IPHONE || UNITY_ANDROID
-	    Screen.sleepTimeout = 0.0ff;
+	    Screen.sleepTimeout = 0;
 
 	    if (!cookShadersOnMobiles)
 		    return;
@@ -25,7 +25,7 @@ public class ShaderDatabase : MonoBehaviour {
 		    Debug.LogWarning ("Dualstick: the CookShadersCover material needs a _TintColor property to properly hide the cooking process", transform);
 	
 	    CreateCameraCoverPlane ();
-	    cookShadersCover.SetColor ("_TintColor", Color (0.0f,0.0f,0.0f,1.0f));
+	    cookShadersCover.SetColor ("_TintColor", new Color(0.0f,0.0f,0.0f,1.0f));
     #endif
     }
 
@@ -86,12 +86,12 @@ public class ShaderDatabase : MonoBehaviour {
 	    cookShadersObject = null;
     }
 
-    void Start (){	
-    #if UNITY_IPHONE || UNITY_ANDROID	
+	#if UNITY_IPHONE || UNITY_ANDROID
+	IEnumerator Start (){	
 	    if (cookShadersOnMobiles)
-		    yield CookShaders ();	
-    #endif
+			yield return CookShaders();	
     }
+	#endif
 
     // this function is cooking all shaders to be used in the game. 
     // it's good practice to draw all of them in order to avoid

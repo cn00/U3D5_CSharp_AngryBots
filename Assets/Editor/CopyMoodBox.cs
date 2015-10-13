@@ -10,7 +10,7 @@ public class CopyMoodBox : ScriptableWizard {
     static void Copy () {
     	if (!Selection.activeGameObject)
     		return;
-    	data = ((MoodBox)Selection.activeGameObject.GetComponent<MoodBox>()).data;
+    	data = Selection.activeGameObject.GetComponent<MoodBox>().data;
     }
 
     [MenuItem ("Tools/PasteMoodBox")]    
