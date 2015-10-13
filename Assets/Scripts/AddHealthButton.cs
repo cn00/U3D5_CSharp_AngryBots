@@ -1,21 +1,12 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
+using System.Collections;
 
-public class MyButton : MonoBehaviour {
-	public Health health;
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
+public class AddHealthButton : MonoBehaviour {
 	static int i = 0;
-	public void OnClick()
+	public Health health;
+
+	public void AddHealth10()
 	{
 		++i;
 		Debug.Log ("Add Health clicked: "+i);
