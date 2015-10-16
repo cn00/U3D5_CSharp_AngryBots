@@ -12,7 +12,7 @@ GameObject:
   - 102: {fileID: 10206494}
   - 114: {fileID: 11463142}
   m_Layer: 9
-  m_Name: HealthLabel
+  m_Name: PlayerLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
