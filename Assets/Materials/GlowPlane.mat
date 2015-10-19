@@ -35,7 +35,7 @@ Material:
       data:
         first:
           name: _TintColor
-        second: {r: .10051173, g: .0934457555, b: .0102145681, a: .307817161}
+        second: {r: .33914265, g: .315300912, b: .0344655849, a: 1.03862429}
 --- !u!1002 &2100001
 EditorExtensionImpl:
   serializedVersion: 6

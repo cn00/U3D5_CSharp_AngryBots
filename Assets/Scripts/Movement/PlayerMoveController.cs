@@ -5,7 +5,7 @@ public class PlayerMoveController : MonoBehaviour {
 
     // Objects to drag in
     public MovementMotor motor;
-    public Transform character;
+
     public GameObject cursorPrefab;
     public GameObject joystickPrefab;
 
@@ -40,19 +40,22 @@ public class PlayerMoveController : MonoBehaviour {
     private Vector3 screenMovementForward;
     private Vector3 screenMovementRight;
 
+	private GameObject localPlayer;
 	GameObject GetLocalPlayer()
-	{
+	{	
+		if (localPlayer)
+			return localPlayer;
 		foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player")) {
 			if (player.GetComponent<PlayerScript> ().isLocalPlayer) {
 				motor = player.GetComponent<PlayerScript>().motor;
-				return player;
+				return localPlayer = player;
 			}
 		}
 		return null;
 	}
 
     void Awake () {
-		if(!GetLocalPlayer())
+		if (!GetLocalPlayer() || !GetLocalPlayer().GetComponent<PlayerScript> ().isLocalPlayer)
 			return;
 		Camera.main.transform.position = GetLocalPlayer().transform.position + new Vector3(0,15,0);
 //		Camera.main.transform.rotation = transform.rotation;
@@ -61,12 +64,7 @@ public class PlayerMoveController : MonoBehaviour {
 	
 		relCameraPosition = Camera.main.transform.position - GetLocalPlayer().transform.position;
 	
-	    // Ensure we have character set
-	    // Default to using the transform this component is on
-	    if (!character)
-		    character = transform;
-	
-	    initOffsetToPlayer = Camera.main.transform.position - character.position;
+	    initOffsetToPlayer = Camera.main.transform.position - GetLocalPlayer().transform.position;
 	
 	    #if UNITY_IPHONE || UNITY_ANDROID
 		if (joystickPrefab) {
@@ -89,17 +87,17 @@ public class PlayerMoveController : MonoBehaviour {
 	    #endif
 	
 	    // Save camera offset so we can use it in the first frame
-	    cameraOffset = Camera.main.transform.position - character.position;
+	    cameraOffset = Camera.main.transform.position - GetLocalPlayer().transform.position;
 	
 	    // Set the initial cursor position to the center of the screen
 	    cursorScreenPosition = new Vector3 (0.5f * Screen.width, 0.5f * Screen.height, 0);
 	
 	    // caching movement plane
-	    playerMovementPlane = new Plane (character.up, character.position + character.up * cursorPlaneHeight);
+	    playerMovementPlane = new Plane (GetLocalPlayer().transform.up, GetLocalPlayer().transform.position + GetLocalPlayer().transform.up * cursorPlaneHeight);
     }
 
     void Start () {
-		if (!GetComponent<PlayerScript> ().isLocalPlayer)
+		if (!GetLocalPlayer() || !GetLocalPlayer().GetComponent<PlayerScript> ().isLocalPlayer)
 			return;
 	    #if UNITY_IPHONE || UNITY_ANDROID
 		// Move to right side of screen
@@ -134,34 +132,39 @@ public class PlayerMoveController : MonoBehaviour {
     }
 
     void Update () {
-		if(!GetComponent<PlayerScript>().isLocalPlayer)
+		if (!GetLocalPlayer() || !GetLocalPlayer().GetComponent<PlayerScript> ().isLocalPlayer)
 			return;
-	    // HANDLE CHARACTER MOVEMENT DIRECTION
+
+		float h = Input.GetAxis("Horizontal");
+		float v = Input.GetAxis("Vertical");
+		Vector3 CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+	    // HANDLE GetLocalPlayer().transform MOVEMENT DIRECTION
 	    #if UNITY_IPHONE || UNITY_ANDROID
 		    motor.movementDirection = joystickLeft.position.x * screenMovementRight + joystickLeft.position.y * screenMovementForward;
 	    #else
-		    motor.movementDirection = Input.GetAxis ("Horizontal") * screenMovementRight + Input.GetAxis ("Vertical") * screenMovementForward;
+//		    motor.movementDirection = Input.GetAxis ("Horizontal") * screenMovementRight + Input.GetAxis ("Vertical") * screenMovementForward;
+		motor.movementDirection = v*CamForward + h*Camera.main.transform.right;
 	    #endif
 	
 	    // Make sure the direction vector doesn't exceed a length of 1
-	    // so the character can't move faster diagonally than horizontally or vertically
+	    // so the GetLocalPlayer().transform can't move faster diagonally than horizontally or vertically
 	    if (motor.movementDirection.sqrMagnitude > 1)
 		    motor.movementDirection.Normalize();
 	
 	
-	    // HANDLE CHARACTER FACING DIRECTION AND SCREEN FOCUS POINT
+	    // HANDLE GetLocalPlayer().transform FACING DIRECTION AND SCREEN FOCUS POINT
 	
-	    // First update the camera position to take into account how much the character moved since last frame
-	    //Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, character.position + cameraOffset, Time.deltaTime * 45.0ff * deathSmoothoutMultiplier);
+	    // First update the camera position to take into account how much the GetLocalPlayer().transform moved since last frame
+	    //Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, GetLocalPlayer().transform.position + cameraOffset, Time.deltaTime * 45.0ff * deathSmoothoutMultiplier);
 	
-	    // Set up the movement plane of the character, so screenpositions
+	    // Set up the movement plane of the GetLocalPlayer().transform, so screenpositions
 	    // can be converted into world positions on this plane
-	    //playerMovementPlane = new Plane (Vector3.up, character.position + character.up * cursorPlaneHeight);
+	    //playerMovementPlane = new Plane (Vector3.up, GetLocalPlayer().transform.position + GetLocalPlayer().transform.up * cursorPlaneHeight);
 	
 	    // optimization (instead of newing Plane):
 	
-	    playerMovementPlane.normal = character.up;
-	    playerMovementPlane.distance = -character.position.y + cursorPlaneHeight;
+	    playerMovementPlane.normal = GetLocalPlayer().transform.up;
+	    playerMovementPlane.distance = -GetLocalPlayer().transform.position.y + cursorPlaneHeight;
 	
 	    // used to adjust the camera based on cursor or joystick position
 	
@@ -205,9 +208,9 @@ public class PlayerMoveController : MonoBehaviour {
 			    cameraAdjustmentVector = posRel.x * screenMovementRight + posRel.y * screenMovementForward;
 			    cameraAdjustmentVector.y = 0.0f;	
 									
-			    // The facing direction is the direction from the character to the cursor world position
-			    motor.facingDirection = (cursorWorldPosition - character.position);
-//		motor.facingDirection = cursorWorldPosition;// - character.position;
+			    // The facing direction is the direction from the GetLocalPlayer().transform to the cursor world position
+			    motor.facingDirection = (cursorWorldPosition - GetLocalPlayer().transform.position);
+//		motor.facingDirection = cursorWorldPosition;// - GetLocalPlayer().transform.position;
 			    motor.facingDirection.y = 0;			
 			
 			    // Draw the cursor nicely
@@ -220,41 +223,41 @@ public class PlayerMoveController : MonoBehaviour {
 	    // HANDLE CAMERA POSITION
 		
 	    // Set the target position of the camera to point at the focus point
-//	    Vector3 cameraTargetPosition = character.position + initOffsetToPlayer + cameraAdjustmentVector * cameraPreview;
-	    Vector3 cameraTargetPosition = transform.position + new Vector3(5,10,5) + cameraAdjustmentVector * cameraPreview;
+//	    Vector3 cameraTargetPosition = GetLocalPlayer().transform.position + initOffsetToPlayer + cameraAdjustmentVector * cameraPreview;
+		Vector3 cameraTargetPosition = GetLocalPlayer().transform.position + new Vector3(5,10,5) + cameraAdjustmentVector * cameraPreview;
 	
 	    // Apply some smoothing to the camera movement
-	    Camera.main.transform.position = Vector3.SmoothDamp (Camera.main.transform.position, cameraTargetPosition, ref cameraVelocity, cameraSmoothing);
-		SmoothLookAt ();
+//	    Camera.main.transform.position = Vector3.SmoothDamp (Camera.main.transform.position, cameraTargetPosition, ref cameraVelocity, cameraSmoothing);
+//		SmoothLookAt ();
 	    // Save camera offset so we can use it in the next frame
-	    cameraOffset = Camera.main.transform.position - character.position;
-//	    cameraOffset = transform.position - character.position;
+	    cameraOffset = Camera.main.transform.position - GetLocalPlayer().transform.position;
+//	    cameraOffset = transform.position - GetLocalPlayer().transform.position;
     }
 
 	void SmoothLookAt(){
-		if(!GetComponent<PlayerScript>().isLocalPlayer)
+		if (!GetLocalPlayer() || !GetLocalPlayer().GetComponent<PlayerScript> ().isLocalPlayer)
 			return;
 
-		Vector3 relPlayerPosition = transform.position - Camera.main.transform.position;
+		Vector3 relPlayerPosition = GetLocalPlayer().transform.position - Camera.main.transform.position;
 		Quaternion lookAtRotation = Quaternion.LookRotation (relPlayerPosition, Vector3.up);
-		Camera.main.transform.rotation = Quaternion.Lerp (Camera.main.transform.rotation, lookAtRotation, 0.5f * Time.deltaTime);
+		Camera.main.transform.rotation = Quaternion.Lerp (Camera.main.transform.rotation, lookAtRotation, 2 * Time.deltaTime);
 	}
 
 	bool CheckViewingPosition(Vector3 v){
 		RaycastHit hit;
-		if(Physics.Raycast(v,transform.position-v, out hit, relCameraPosition.magnitude) && hit.transform != transform){
+		if(Physics.Raycast(v,GetLocalPlayer().transform.position-v, out hit, relCameraPosition.magnitude) && hit.transform != transform){
 			return true;
 		}
 		return false;
 	}
 	void FixedUpdate(){
-		if(!GetComponent<PlayerScript>().isLocalPlayer)
+		if (!GetLocalPlayer() || !GetLocalPlayer().GetComponent<PlayerScript> ().isLocalPlayer)
 			return;
 
-		Vector3 standardPosition = transform.position + relCameraPosition;
-		Vector3 abovePosition = transform.position + Vector3.up * relCameraPosition.magnitude;
+		Vector3 standardPosition = GetLocalPlayer().transform.position + relCameraPosition;
+		Vector3 abovePosition = GetLocalPlayer().transform.position + Vector3.up * relCameraPosition.magnitude;
 //		Vector3[] checkPosition = new Vector3[7];
-		Vector3 newPosition = new Vector3();
+		Vector3 newPosition = Camera.main.transform.forward*(-30.0f);
 		for (int i = 0; i <9; ++i) {
 			newPosition =  Vector3.Lerp(standardPosition, abovePosition, 0.25f*i);
 			if(CheckViewingPosition(newPosition)){
@@ -263,8 +266,8 @@ public class PlayerMoveController : MonoBehaviour {
 			}
 		}
 //		Camera.main.transform.position = Vector3.SmoothDamp (Camera.main.transform.position, newPosition, ref cameraVelocity, cameraSmoothing);
-//		Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, newPosition, 1.0f * Time.deltaTime);
-//		SmoothLookAt ();
+		Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, newPosition, 2 * Time.deltaTime);
+		SmoothLookAt ();
 	}
 
     public static Vector3 PlaneRayIntersection ( Plane plane ,   Ray ray  ) {
@@ -284,7 +287,7 @@ public class PlayerMoveController : MonoBehaviour {
     void HandleCursorAlignment ( Vector3 cursorWorldPosition  ) {
 	    if (!cursorObject)
 		    return;
-		if(!GetComponent<PlayerScript>().isLocalPlayer)
+		if (!GetLocalPlayer() || !GetLocalPlayer().GetComponent<PlayerScript> ().isLocalPlayer)
 			return;
 
 	    // HANDLE CURSOR POSITION
@@ -305,7 +308,7 @@ public class PlayerMoveController : MonoBehaviour {
 		    cursorWorldRotation = Quaternion.LookRotation (motor.facingDirection);
 	
 	    // Calculate cursor billboard rotation
-	    Vector3 cursorScreenspaceDirection = Input.mousePosition - Camera.main.WorldToScreenPoint (transform.position + character.up * cursorPlaneHeight);
+		Vector3 cursorScreenspaceDirection = Input.mousePosition - Camera.main.WorldToScreenPoint (GetLocalPlayer().transform.position + GetLocalPlayer().transform.up * cursorPlaneHeight);
 	    cursorScreenspaceDirection.z = 0;
 	    Quaternion cursorBillboardRotation = Camera.main.transform.rotation * Quaternion.LookRotation (cursorScreenspaceDirection, -Vector3.forward);
 	
@@ -319,7 +322,7 @@ public class PlayerMoveController : MonoBehaviour {
 	    // Scale it by the inverse of the distance to the camera plane to compensate for that.
 	    float compensatedScale = 0.1f * Vector3.Dot (cursorWorldPosition - Camera.main.transform.position, Camera.main.transform.forward);
 	
-	    // Make the cursor smaller when close to character
+	    // Make the cursor smaller when close to GetLocalPlayer().transform
 	    float cursorScaleMultiplier = Mathf.Lerp (0.7f, 1.0f, Mathf.InverseLerp (0.5f, 4.0f, motor.facingDirection.magnitude));
 	
 	    // Set the scale of the cursor
