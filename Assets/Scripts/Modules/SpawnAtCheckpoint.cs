@@ -16,7 +16,7 @@ public class SpawnAtCheckpoint : MonoBehaviour {
         Health[] healthObjects = FindObjectsOfType(typeof(Health)) as Health[];
 	    foreach(Health health in healthObjects) {
 		    health.dead = false;
-		    health.health = health.maxHealth;
+		    health.SetHealth(health.maxHealth);
 	    }
     }
 

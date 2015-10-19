@@ -23,7 +23,7 @@ public class MechAttackMoveController : MonoBehaviour {
     #region 私有变量
         private AI ai;
         private Transform character;
-        private Transform player;
+		private GameObject[] players;
 
         private bool inRange = false;
         private float nextRaycastTime = 0;
@@ -37,7 +37,7 @@ public class MechAttackMoveController : MonoBehaviour {
 
     void Awake (){
 	    character = motor.transform;
-	    player = GameObject.FindWithTag ("Player").transform;
+//	    player = GameObject.FindWithTag ("Player").transform;
 	    ai = transform.parent.GetComponentInChildren<AI> ();
         inRange = firing = false; nextRaycastTime = lastRaycastSuccessfulTime = noticeTime = nextWeaponToFire = 0; lastFireTime = -1;
     }
@@ -52,6 +52,17 @@ public class MechAttackMoveController : MonoBehaviour {
     void OnDisable () {
 	    Shoot (false);
     }
+
+	Transform getNearstPlayer(){
+		players = GameObject.FindGameObjectsWithTag ("Player");
+		Transform player = players[0].transform;
+		foreach (GameObject trans in players) {
+			if((trans.transform.position - character.position).magnitude 
+			   < (player.position - character.position).magnitude)
+				player = trans.transform;
+		}
+		return player;
+	}
 
     public void Shoot(bool state) {
 	     firing = state;
@@ -69,7 +80,7 @@ public class MechAttackMoveController : MonoBehaviour {
     // 3.判断玩家是否在攻击范围内，如果在攻击范围内并能看见玩家，则开火攻击。4.对开火攻击的频率设置
     void Update () {
 	    // 计算从玩家到这个角色间的方向
-	    Vector3 playerDirection = (player.position - character.position);
+	    Vector3 playerDirection = (getNearstPlayer().position - character.position);
 	    playerDirection.y = 0;
 	    float playerDist = playerDirection.magnitude;
 	    playerDirection /= playerDist;
@@ -119,7 +130,7 @@ public class MechAttackMoveController : MonoBehaviour {
 
     // 正瞄准玩家中
     public bool IsAimingAtPlayer (){
-	     Vector3 playerDirection = (player.position - head.position);
+	     Vector3 playerDirection = (getNearstPlayer().position - head.position);
 	    playerDirection.y = 0;
 	    return Vector3.Angle (head.forward, playerDirection) < 15;
     }

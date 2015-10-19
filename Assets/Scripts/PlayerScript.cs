@@ -11,7 +11,8 @@ public class PlayerScript : MonoBehaviour {
 	public Material metalMaterial;
 	public Material orgMaterial;
 	
-	
+	public MovementMotor motor;
+
 	private float coloredUntill;
 	private bool invincible;
 	

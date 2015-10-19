@@ -77,16 +77,16 @@ private void AutoDetectQuality ()
 {
 	#if UNITY_IPHONE
 
-		switch (iPhone.generation)
+		switch (UnityEngine.iOS.Device.generation)
 		{
-			case iPhoneGeneration.iPad1Gen:
+			case UnityEngine.iOS.DeviceGeneration.iPad1Gen:
 				currentQuality = Quality.Low;
 			break;
-			case iPhoneGeneration.iPad2Gen:
+			case UnityEngine.iOS.DeviceGeneration.iPad2Gen:
 				currentQuality = Quality.High;
 			break;
-			case iPhoneGeneration.iPhone3GS:
-			case iPhoneGeneration.iPodTouch3Gen:
+			case UnityEngine.iOS.DeviceGeneration.iPhone3GS:
+			case UnityEngine.iOS.DeviceGeneration.iPodTouch3Gen:
 				currentQuality = Quality.Low;
 			break;
 			default:
@@ -120,7 +120,7 @@ private void AutoDetectQuality ()
 		"AngryBots: Quality set to '{0}'{1}",
 		currentQuality,
 		#if UNITY_IPHONE
-			" (" + iPhone.generation + " class iOS)"
+			" (" + UnityEngine.iOS.Device.generation + " class iOS)"
 		#elif UNITY_ANDROID
 			" (Android)"
 		#else

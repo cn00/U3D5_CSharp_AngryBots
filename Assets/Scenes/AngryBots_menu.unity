@@ -114,8 +114,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4ee11183fc234ad88fedf0516d73818, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  connectToIP: 0.0.0.0
+  connectToIP: 127.0.0.1
   connectPort: 25001
+  playerName: 
 --- !u!4 &558999798
 Transform:
   m_ObjectHideFlags: 0

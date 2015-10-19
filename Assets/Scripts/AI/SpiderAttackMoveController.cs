@@ -28,7 +28,7 @@ public class SpiderAttackMoveController : MonoBehaviour {
 
     private Transform character;
 
-    private Transform player;
+	private GameObject[] players;
 
     private bool  inRange = false;
     private float nextRaycastTime = 0;
@@ -41,10 +41,10 @@ public class SpiderAttackMoveController : MonoBehaviour {
         inRange = false; nextRaycastTime = lastRaycastSuccessfulTime = proximityLevel = lastBlinkTime = noticeTime = 0;
 
 	    character = motor.transform;
-	    player = GameObject.FindWithTag ("Player").transform;    
 	    ai = transform.parent.GetComponentInChildren<AI> ();
+		// 将怪子物体身上所有绑有SelfIlluminationBlink脚本的物体的SelfIlluminationBlink放到数组中
 	    if (0 != blinkComponents.Length)
-            blinkComponents = transform.parent.GetComponentsInChildren<SelfIlluminationBlink>();   // 将怪子物体身上所有绑有SelfIlluminationBlink脚本的物体的SelfIlluminationBlink放到数组中
+            blinkComponents = transform.parent.GetComponentsInChildren<SelfIlluminationBlink>(); 
     }
 
     void OnEnable (){
@@ -68,12 +68,23 @@ public class SpiderAttackMoveController : MonoBehaviour {
 		    blinkPlane.GetComponent<Renderer>().enabled = false;
     }
 
+	Transform getNearstPlayer(){
+	    players = GameObject.FindGameObjectsWithTag ("Player");    
+		Transform player = players.Length > 0 ? players[0].transform : null;
+		foreach (GameObject trans in players) {
+			if((trans.transform.position - character.position).magnitude 
+			   < (player.position - character.position).magnitude)
+				player = trans.transform;
+		}
+		return player;
+	}
+
     void Update (){
 	    if (Time.time < noticeTime + 0.7f) {
 		    motor.movementDirection = Vector3.zero;
 		    return;
 	    }
-	
+		Transform player = getNearstPlayer ();
 	    // Calculate the direction from the player to this character
 	    Vector3 playerDirection = (player.position - character.position);
 	    playerDirection.y = 0;
@@ -136,7 +147,8 @@ public class SpiderAttackMoveController : MonoBehaviour {
     }
 
     void Explode (){
-	    float damageFraction = 1 - (Vector3.Distance (player.position, character.position) / damageRadius);
+		Transform player = getNearstPlayer ();
+		float damageFraction = 1 - (Vector3.Distance (player.position, character.position) / damageRadius);
 
         Health targetHealth = player.GetComponent<Health>();   // Health : Weapons(武器)文件夹下的脚本，生命值效果的脚本
 	    if (targetHealth) {

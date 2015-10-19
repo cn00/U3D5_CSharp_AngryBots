@@ -130,7 +130,7 @@ public class ReflectionFx : MonoBehaviour
 		float closestDist = Mathf.Infinity;
 		Vector3 pos = Camera.main.transform.position;
 		foreach (Transform t in reflectiveObjects) {
-			if (t.GetComponent<Renderer>().isVisible) {
+			if (t&&t.GetComponent<Renderer>()&&t.GetComponent<Renderer>().isVisible) {
 				float dist = (pos - t.position).sqrMagnitude;
 				if (dist < closestDist) {
 					closestDist = dist;

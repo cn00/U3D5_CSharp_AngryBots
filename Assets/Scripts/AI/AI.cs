@@ -12,12 +12,11 @@ public class AI : MonoBehaviour {
 
     // Private memeber data
     private Transform character;              // 怪自己Transform的变量
-    private Transform player;                 // 玩家Transform的变量
+    private GameObject[] players;                 // 玩家Transform的变量
     private bool insideInterestArea = true;    // 玩家在AI攻击区域
 
     void Awake (){
 	    character = transform;
-	    player = GameObject.FindWithTag ("Player").transform;
         insideInterestArea = true;
     }
 
@@ -26,10 +25,22 @@ public class AI : MonoBehaviour {
 	    behaviourOnLostTrack.enabled = true;
 	    behaviourOnSpotted.enabled = false;
     }
+	
+	Transform getNearstPlayer(){
+	    players = GameObject.FindGameObjectsWithTag ("Player");
+		Transform player = players[0].transform;
+		foreach (GameObject trans in players) {
+			if((trans.transform.position - character.position).magnitude 
+			   < (player.position - character.position).magnitude)
+				player = trans.transform;
+		}
+		return player;
+	}
 
     // 当玩家进入出发区域，调用发现玩家函数
     void OnTriggerEnter ( Collider other  ){
-	    if (other.transform == player && CanSeePlayer ()) {
+
+		if (other.transform == getNearstPlayer() && CanSeePlayer ()) {
 		    OnSpotted ();
 	    }
     }
@@ -74,10 +85,10 @@ public class AI : MonoBehaviour {
     /// </summary>
     
     public bool CanSeePlayer (){
-	    Vector3 playerDirection = (player.position - character.position);
+		Vector3 playerDirection = (getNearstPlayer().position - character.position);
 	    RaycastHit hit;
 	    Physics.Raycast (character.position, playerDirection, out hit, playerDirection.magnitude);
-	    if (hit.collider && hit.collider.transform == player) {
+		if (hit.collider && hit.collider.transform == getNearstPlayer()) {
 		    return true;
 	    }
 	    return false;
