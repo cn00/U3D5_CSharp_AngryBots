@@ -7,7 +7,7 @@ public class TestVoiceChannel : MonoBehaviour {
 
 //	private bool isOnline = false;
 //	private string status = "";
-
+	public bool isShowVoiceUI = false;
 	string[] channelInfo = {"eyJjaGFubmVsSWQiOiIyIiwicm9vbUlkIjo3OTU5NSwic2VydmVySWQiOjcxODUsInR5cGUiOjF9","eyJjaGFubmVsSWQiOiIzIiwicm9vbUlkIjo3OTU5Niwic2VydmVySWQiOjcxODUsInR5cGUiOjF9"};
 	private int index = 0;
 	private string m_InGameLog = "";
@@ -32,7 +32,8 @@ public class TestVoiceChannel : MonoBehaviour {
 	}
 
 	void OnGUI() {
-
+		if (!isShowVoiceUI)
+			return;
 		int inset = Screen.width / 20;
 		int space = Screen.width / 30;
 		int btnsOneRow = 3;

@@ -5,6 +5,7 @@ using System.Collections;
 public class UIButtonClick : MonoBehaviour {
 	static int i = 0;
 	public Health health;
+	public TestVoiceChannel testVoice;
 
 	public void OnAddHealth10()
 	{
@@ -21,6 +22,10 @@ public class UIButtonClick : MonoBehaviour {
 			text.text = ("Add Health:" + i);
 			health.SetHealth (health.health + 10);
 		}
+	}
+
+	public void OnShowVoiceUI(){
+		testVoice.isShowVoiceUI = !testVoice.isShowVoiceUI;
 	}
 
 	public void OnLogout(){
