@@ -19,7 +19,7 @@ public class PlayerScript : MonoBehaviour {
 	
 	void Awake(){
 //		orgMaterial = GetComponent<Renderer>().material;
-		
+		Debug.Log (thisName);
 //		theScoreBoard= GameObject.Find("Generalscripts").GetComponent(scoreBoard);
 	}
 	

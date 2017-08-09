@@ -69,15 +69,8 @@ public class PlayerMoveController : MonoBehaviour {
 	    #if UNITY_IPHONE || UNITY_ANDROID
 		if (joystickPrefab) {
 			if(GetComponent<PlayerScript>().isLocalPlayer){
-				// Create left joystick
-				GameObject joystickLeftGO = Instantiate (joystickPrefab) as GameObject;
-				joystickLeftGO.name = "Joystick Left";
-				joystickLeft = joystickLeftGO.GetComponent<Joystick>();
-				
-				// Create right joystick
-				joystickRightGO = Instantiate (joystickPrefab) as GameObject;
-				joystickRightGO.name = "Joystick Right";
-				joystickRight = joystickRightGO.GetComponent<Joystick> ();
+				getJoystic("Left");
+				getJoystic("Right");
 			}
 		}
 	    #elif !UNITY_FLASH
@@ -96,6 +89,27 @@ public class PlayerMoveController : MonoBehaviour {
 	    playerMovementPlane = new Plane (GetLocalPlayer().transform.up, GetLocalPlayer().transform.position + GetLocalPlayer().transform.up * cursorPlaneHeight);
     }
 
+	Joystick getJoystic(string name){
+		if (name == "Left") {
+			if (!joystickLeft){
+				// Create left joystick
+				GameObject joystickLeftGO = Instantiate (joystickPrefab) as GameObject;
+				joystickLeftGO.name = "Joystick Left";
+				joystickLeft = joystickLeftGO.GetComponent<Joystick> ();
+			}
+			return joystickLeft;
+		} else {
+			if(!joystickRight){
+				// Create right joystick
+				joystickRightGO = Instantiate (joystickPrefab) as GameObject;
+				joystickRightGO.name = "Joystick Right";
+				joystickRight = joystickRightGO.GetComponent<Joystick> ();
+			}
+			return joystickRight;
+		}
+		return null;
+	}
+
     void Start () {
 		if (!GetLocalPlayer() || !GetLocalPlayer().GetComponent<PlayerScript> ().isLocalPlayer)
 			return;
@@ -109,7 +123,7 @@ public class PlayerMoveController : MonoBehaviour {
 	    #endif	
 	
 	    // it's fine to calculate this on Start () as the camera is static in rotation
-	
+//		string a = new string(new char[]{'a','b','c'});
 	    screenMovementSpace = Quaternion.Euler (0, Camera.main.transform.eulerAngles.y, 0);
 	    screenMovementForward = screenMovementSpace * Vector3.forward;
 	    screenMovementRight = screenMovementSpace * Vector3.right;	
@@ -117,18 +131,18 @@ public class PlayerMoveController : MonoBehaviour {
 
     void OnDisable () {
 	    if (joystickLeft) 
-		    joystickLeft.enabled = false;
+		    getJoystic("Left").enabled = false;
 	
 	    if (joystickRight)
-		    joystickRight.enabled = false;
+		    getJoystic("Right").enabled = false;
     }
 
     void OnEnable () {
 	    if (joystickLeft) 
-		    joystickLeft.enabled = true;
+		    getJoystic("Left").enabled = true;
 	
 	    if (joystickRight)
-		    joystickRight.enabled = true;
+		    getJoystic("Right").enabled = true;
     }
 
     void Update () {
@@ -140,10 +154,10 @@ public class PlayerMoveController : MonoBehaviour {
 		Vector3 CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
 	    // HANDLE GetLocalPlayer().transform MOVEMENT DIRECTION
 	    #if UNITY_IPHONE || UNITY_ANDROID
-		    motor.movementDirection = joystickLeft.position.x * screenMovementRight + joystickLeft.position.y * screenMovementForward;
+		    motor.movementDirection = getJoystic("Left").position.x * screenMovementRight + getJoystic("Left").position.y * screenMovementForward;
 	    #else
 //		    motor.movementDirection = Input.GetAxis ("Horizontal") * screenMovementRight + Input.GetAxis ("Vertical") * screenMovementForward;
-		motor.movementDirection = v*CamForward + h*Camera.main.transform.right;
+		motor.movementDirection = (v*CamForward + h*Camera.main.transform.right);
 	    #endif
 	
 	    // Make sure the direction vector doesn't exceed a length of 1
@@ -173,7 +187,7 @@ public class PlayerMoveController : MonoBehaviour {
 	    #if UNITY_IPHONE || UNITY_ANDROID
 	
 		// On mobiles, use the thumb stick and convert it into screen movement space
-		motor.facingDirection = joystickRight.position.x * screenMovementRight + joystickRight.position.y * screenMovementForward;
+		motor.facingDirection = getJoystic("Right").position.x * screenMovementRight + getJoystic("Right").position.y * screenMovementForward;
 				
 		cameraAdjustmentVector = motor.facingDirection;		
 	
@@ -209,7 +223,8 @@ public class PlayerMoveController : MonoBehaviour {
 			    cameraAdjustmentVector.y = 0.0f;	
 									
 			    // The facing direction is the direction from the GetLocalPlayer().transform to the cursor world position
-			    motor.facingDirection = (cursorWorldPosition - GetLocalPlayer().transform.position);
+//			    motor.facingDirection = (cursorWorldPosition - GetLocalPlayer().transform.position);
+		motor.facingDirection = -1*Camera.main.transform.forward;
 //		motor.facingDirection = cursorWorldPosition;// - GetLocalPlayer().transform.position;
 			    motor.facingDirection.y = 0;			
 			
@@ -257,7 +272,7 @@ public class PlayerMoveController : MonoBehaviour {
 		Vector3 standardPosition = GetLocalPlayer().transform.position + relCameraPosition;
 		Vector3 abovePosition = GetLocalPlayer().transform.position + Vector3.up * relCameraPosition.magnitude;
 //		Vector3[] checkPosition = new Vector3[7];
-		Vector3 newPosition = Camera.main.transform.forward*(-30.0f);
+		Vector3 newPosition = abovePosition-Camera.main.transform.forward*(10.0f);
 		for (int i = 0; i <9; ++i) {
 			newPosition =  Vector3.Lerp(standardPosition, abovePosition, 0.25f*i);
 			if(CheckViewingPosition(newPosition)){

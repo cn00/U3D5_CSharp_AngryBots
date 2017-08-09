@@ -5,8 +5,8 @@ public class conveyorBelt : MonoBehaviour {
 
 
 
-float scrollSpeed = 0.1f;
-Material mat;
+	public float scrollSpeed = 0.1f;
+	public Material mat;
 
 void Start (){
 	enabled = false;

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class TriggerOnMouseOrJoystick : MonoBehaviour {
 
